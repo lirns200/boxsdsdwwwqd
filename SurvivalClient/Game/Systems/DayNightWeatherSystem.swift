@@ -17,16 +17,16 @@ final class DayNightWeatherSystem {
     func update(dayTimeMinutes: Double, weatherKind: String, intensity: Double) {
         let hour = dayTimeMinutes / 60.0
         if hour >= 20 || hour <= 5 {
-            darknessOverlay.alpha = CGFloat(min(max(0.35 + intensity * 0.25, 0), 0.8))
+            darknessOverlay.alpha = CGFloat(Swift.min(Swift.max(0.35 + intensity * 0.25, 0), 0.8))
         } else {
             darknessOverlay.alpha = 0.0
         }
 
         switch weatherKind {
         case "fog":
-            fogOverlay.alpha = CGFloat(min(max(0.15 + intensity * 0.45, 0), 0.65))
+            fogOverlay.alpha = CGFloat(Swift.min(Swift.max(0.15 + intensity * 0.45, 0), 0.65))
         case "rain", "storm":
-            fogOverlay.alpha = CGFloat(min(max(0.08 + intensity * 0.2, 0), 0.35))
+            fogOverlay.alpha = CGFloat(Swift.min(Swift.max(0.08 + intensity * 0.2, 0), 0.35))
         default:
             fogOverlay.alpha = 0.0
         }

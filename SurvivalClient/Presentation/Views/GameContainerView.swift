@@ -189,7 +189,7 @@ private struct StatusBar: View {
                         .fill(Color.white.opacity(0.15))
                     RoundedRectangle(cornerRadius: 4)
                         .fill(color)
-                        .frame(width: geo.size.width * CGFloat(min(max(value / max, 0), 1)))
+                        .frame(width: geo.size.width * CGFloat(Swift.min(Swift.max(value / max, 0), 1)))
                 }
             }
             .frame(height: 8)
