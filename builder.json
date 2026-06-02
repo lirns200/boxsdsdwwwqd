@@ -1,0 +1,16 @@
+{
+  "project": "SurvivalClient",
+  "platform": "ios",
+  "github": {
+    "owner": "lirns200",
+    "repo": "boxsdsdwwwqd"
+  },
+  "ios": {
+    "path": "SurvivalClient"
+  },
+  "flutter": {
+    "watch": {}
+  },
+  "reactNative": {},
+  "mobai": {}
+}
