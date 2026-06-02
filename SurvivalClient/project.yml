@@ -1,0 +1,48 @@
+name: SurvivalClient
+options:
+  bundleIdPrefix: com.lirns200
+settings:
+  base:
+    SWIFT_VERSION: 5.0
+    IPHONEOS_DEPLOYMENT_TARGET: 16.0
+    TARGETED_DEVICE_FAMILY: "1,2"
+    DEVELOPMENT_LANGUAGE: en
+configs:
+  Debug: debug
+  Release: release
+targets:
+  SurvivalClient:
+    type: application
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources:
+      - App
+      - Domain
+      - Data
+      - Presentation
+      - Game
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.lirns200.SurvivalClient
+        PRODUCT_NAME: SurvivalClient
+        GENERATE_INFOPLIST_FILE: YES
+        CURRENT_PROJECT_VERSION: 1
+        MARKETING_VERSION: 1.0
+        CODE_SIGN_STYLE: Automatic
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ENABLE_PREVIEWS: YES
+        SWIFT_EMIT_LOC_STRINGS: YES
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
+schemes:
+  SurvivalClient:
+    build:
+      targets:
+        SurvivalClient: all
+    run:
+      config: Debug
+    archive:
+      config: Release

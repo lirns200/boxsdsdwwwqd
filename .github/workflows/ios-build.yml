@@ -165,11 +165,30 @@ jobs:
           WORKSPACE=$(find . -maxdepth 1 -name "*.xcworkspace" | head -1)
           PROJECT=$(find . -maxdepth 1 -name "*.xcodeproj" | head -1)
 
+          # Bootstrap native project from xcodegen spec if needed
+          if [ "$PROJECT_TYPE" = "native" ] && [ -z "$WORKSPACE" ] && [ -z "$PROJECT" ]; then
+            if [ -f "project.yml" ] || [ -f "project.yaml" ]; then
+              echo "No .xcodeproj found. Generating with xcodegen..."
+              if ! command -v xcodegen >/dev/null 2>&1; then
+                brew install xcodegen
+              fi
+              xcodegen generate
+              WORKSPACE=$(find . -maxdepth 1 -name "*.xcworkspace" | head -1)
+              PROJECT=$(find . -maxdepth 1 -name "*.xcodeproj" | head -1)
+            fi
+          fi
+
           # Install pods if Podfile exists (always run to ensure sync with Podfile.lock)
           if [ -f "Podfile" ]; then
             echo "Running pod install..."
             pod install
             WORKSPACE=$(find . -maxdepth 1 -name "*.xcworkspace" | head -1)
+          fi
+
+          if [ -z "$WORKSPACE" ] && [ -z "$PROJECT" ]; then
+            echo "Error: No .xcworkspace or .xcodeproj found in $IOS_PATH"
+            echo "Hint: add project.yml (xcodegen) or commit an Xcode project."
+            exit 1
           fi
 
           # Determine scheme (only needed for native projects)
@@ -182,6 +201,21 @@ jobs:
             elif [ -n "$PROJECT" ]; then
               SCHEME=$(xcodebuild -project "$PROJECT" -list 2>/dev/null | grep -A 100 "Schemes:" | tail -n +2 | head -1 | xargs)
             fi
+
+            # fallback: use project/workspace basename
+            if [ -z "$SCHEME" ]; then
+              if [ -n "$WORKSPACE" ]; then
+                SCHEME=$(basename "$WORKSPACE" .xcworkspace)
+              elif [ -n "$PROJECT" ]; then
+                SCHEME=$(basename "$PROJECT" .xcodeproj)
+              fi
+            fi
+
+            if [ -z "$SCHEME" ]; then
+              echo "Error: Could not determine Xcode scheme"
+              exit 1
+            fi
+
             echo "Building with scheme: $SCHEME (configuration: $CONFIGURATION)"
           fi
 
