@@ -17,45 +17,51 @@ struct GameContainerView: View {
     }
 
     var body: some View {
-        ZStack {
-            SpriteView(scene: GameScene.shared, options: [.allowsTransparency])
-                .ignoresSafeArea()
-                .onAppear {
-                    GameScene.shared.bind(viewModel: gameVM)
-                }
+        GeometryReader { geo in
+            let isLandscape = geo.size.width > geo.size.height
 
-            VStack {
-                topHUD
-                Spacer()
-                bottomControls
-            }
-            .padding()
+            ZStack {
+                SpriteView(scene: GameScene.shared, options: [.allowsTransparency])
+                    .ignoresSafeArea()
+                    .onAppear {
+                        GameScene.shared.bind(viewModel: gameVM)
+                    }
 
-            VStack {
-                Spacer()
-                HStack {
+                VStack {
+                    topHUD
                     Spacer()
-                    overlayPanel
-                        .frame(width: 340, height: 320)
-                        .padding(.trailing, 10)
+                    bottomControls(isLandscape: isLandscape)
                 }
-            }
+                .padding(.horizontal, isLandscape ? 16 : 10)
+                .padding(.vertical, isLandscape ? 8 : 12)
 
-            VStack {
-                Spacer()
-                chatPanel
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        overlayPanel
+                            .frame(width: isLandscape ? 360 : 330, height: isLandscape ? 300 : 280)
+                            .padding(.trailing, isLandscape ? 12 : 6)
+                            .padding(.bottom, isLandscape ? 44 : 120)
+                    }
+                }
+
+                VStack {
+                    Spacer()
+                    chatPanel
+                }
+                .padding(.bottom, isLandscape ? 6 : 8)
             }
-            .padding(.bottom, 8)
-        }
-        .background(Color.black)
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Text("ID: \(gameVM.playerId)")
-                    .font(.caption)
-            }
-            ToolbarItem(placement: .topBarTrailing) {
-                Button("Выйти", role: .destructive) {
-                    onExit()
+            .background(Color.black)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Text("ID: \(gameVM.playerId)")
+                        .font(.caption)
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Выйти", role: .destructive) {
+                        onExit()
+                    }
                 }
             }
         }
@@ -77,37 +83,55 @@ struct GameContainerView: View {
         }
     }
 
-    private var bottomControls: some View {
-        HStack(alignment: .bottom) {
+    private func bottomControls(isLandscape: Bool) -> some View {
+        HStack(alignment: .bottom, spacing: isLandscape ? 14 : 8) {
             JoystickView(vector: $joystickVector) { vector in
                 joystickVector = vector
                 gameVM.sendMovement(vx: Double(vector.dx), vy: Double(-vector.dy), running: isRunning)
             }
+            .frame(width: isLandscape ? 130 : 100, height: isLandscape ? 130 : 100)
 
-            Spacer()
-
-            VStack(spacing: 8) {
-                Button("Атака") { gameVM.attack() }
-                    .buttonStyle(.borderedProminent)
-                Button("Перезарядка") { gameVM.reload() }
-                    .buttonStyle(.bordered)
-                Toggle("Бег", isOn: $isRunning)
-                    .toggleStyle(.button)
-                HStack {
+            if isLandscape {
+                HStack(spacing: 8) {
+                    Button("Атака") { gameVM.attack() }
+                        .buttonStyle(.borderedProminent)
+                    Button("Перезарядка") { gameVM.reload() }
+                        .buttonStyle(.bordered)
+                    Toggle("Бег", isOn: $isRunning)
+                        .toggleStyle(.button)
                     Button("Исп. бинт") { gameVM.use(itemId: "bandage") }
+                        .buttonStyle(.bordered)
                     Button("Палатка") { gameVM.build(buildId: "tent", x: 10, y: 10) }
+                        .buttonStyle(.bordered)
                 }
-                .buttonStyle(.bordered)
+                .font(.footnote)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 6)
+                .background(.black.opacity(0.45), in: RoundedRectangle(cornerRadius: 12))
+            } else {
+                VStack(spacing: 8) {
+                    Button("Атака") { gameVM.attack() }
+                        .buttonStyle(.borderedProminent)
+                    Button("Перезарядка") { gameVM.reload() }
+                        .buttonStyle(.bordered)
+                    Toggle("Бег", isOn: $isRunning)
+                        .toggleStyle(.button)
+                    HStack {
+                        Button("Исп. бинт") { gameVM.use(itemId: "bandage") }
+                        Button("Палатка") { gameVM.build(buildId: "tent", x: 10, y: 10) }
+                    }
+                    .buttonStyle(.bordered)
+                }
             }
 
-            Spacer()
+            Spacer(minLength: 8)
 
             MiniMapView(targets: gameVM.nearbyTargets)
-                .frame(width: 160, height: 160)
+                .frame(width: isLandscape ? 140 : 160, height: isLandscape ? 140 : 160)
                 .background(.black.opacity(0.55), in: RoundedRectangle(cornerRadius: 10))
 
             QuickSlotsView(items: gameVM.inventoryItems)
-                .frame(width: 220)
+                .frame(width: isLandscape ? 180 : 220)
         }
     }
 

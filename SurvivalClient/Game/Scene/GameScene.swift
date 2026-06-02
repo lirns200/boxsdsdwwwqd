@@ -1,7 +1,7 @@
 import SpriteKit
 
 final class GameScene: SKScene {
-    static let shared = GameScene(size: CGSize(width: 1600, height: 900))
+    static let shared = GameScene(size: CGSize(width: 2532, height: 1170))
 
     private weak var gameVM: GameViewModel?
     private let cameraNode = SKCameraNode()
@@ -16,7 +16,7 @@ final class GameScene: SKScene {
 
     private override init(size: CGSize) {
         super.init(size: size)
-        scaleMode = .resizeFill
+        scaleMode = .aspectFill
         backgroundColor = SKColor(red: 0.10, green: 0.13, blue: 0.10, alpha: 1.0)
     }
 
